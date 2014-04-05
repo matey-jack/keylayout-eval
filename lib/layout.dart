@@ -6,19 +6,22 @@ var layout_qwertz = new Layout("qwertz",
     ["qwert zuiopü",
      "asdfg hjklöä",
      "yxcvb nm,.ß",
+     ]);
+var layout_neo2 = new Layout("Neo 2",
+    ["xvlcw khgfqß",
+     "uiaeo snrtdy",
+     "üöäpz bm,.j",
+     ]);
+var layout_nit = new Layout("leicht-nit",
+    ["qwerß zkuopü",
+    "asdfg hniltä",
+    "yxcvb jm,.ö",
     ]);
-var layout_neo2 = ["xvlcw khgfqß",
-                   "uiaeo snrtdy",
-                   "üöäpz bm,.j",
-                   ];
-var layout_nit = ["qwerß zkuopü",
-                  "asdfg hniltä",
-                  "yxcvb jm,.ö",
-                  ];
-var layout_leicht = ["qwßfd zkuopü",
-                     "aserg hniltä",
-                     "yxcvb jm,.ö",
-                     ];
+var layout_leicht = new Layout("leicht-er",
+    ["qwßfd zkuopü",
+     "aserg hniltä",
+     "yxcvb jm,.ö",
+     ]);
 
 Map<int, int> make_on_row(List<String> layout) {
   var result = {};
@@ -44,20 +47,6 @@ bool check_row(String row, int len) {
   return false;
 }
 
-void check_layout(List<String> layout) {
-  layout.forEach((line) => expect(line[5], ' '));
-  expect(layout[0].length, 12, reason:layout[0]);
-  expect(layout[1].length, 12, reason:layout[1]);
-  expect(layout[2].length, 11, reason:layout[2]);
-  String letters = (layout[0] + layout[1] + layout[2]).replaceAll(' ', '');
-  var lts = new Set.from(letters.runes);
-  var exp_lts = new Set.from("äöüß,.".runes);
-  for (var i = 'a'.runes.single; i <= 'z'.runes.single; i++) {
-    exp_lts.add(i);
-  }
-  exp_lts.forEach((rune) => expect(lts, contains(rune), reason: new String.fromCharCode(rune)));
-}
-
 class Layout {
   String name;
   List<String> layout_2d;
@@ -66,7 +55,25 @@ class Layout {
   // rune --> row
   Map<int, int> on_row;
   
+  void check_layout(List<String> layout) {
+    layout.forEach((line) => expect(line[5], ' '));
+    expect(layout[0].length, 12, reason:name + ':' + layout[0]);
+    expect(layout[1].length, 12, reason:name + ':' + layout[1]);
+    expect(layout[2].length, 11, reason:name + ':' + layout[2]);
+    String letters = (layout[0] + layout[1] + layout[2]).replaceAll(' ', '');
+    var lts = new Set.from(letters.runes);
+    var exp_lts = new Set.from("äöüß,.".runes);
+    for (var i = 'a'.runes.single; i <= 'z'.runes.single; i++) {
+      exp_lts.add(i);
+    }
+    exp_lts.forEach((rune) => 
+        expect(lts, contains(rune), 
+            reason: name + ':' + new String.fromCharCode(rune)
+        ));
+  }
+
   Layout(String this.name, List<String> this.layout_2d) {
+    check_layout(layout_2d);
     on_finger = make_on_finger(layout_2d);
     on_row = make_on_row(layout_2d);
   }
