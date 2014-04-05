@@ -30,9 +30,12 @@ void main() {
   });
   
   test("single cost", () {
-    expect(layout_nit.single_cost('p'.runes.single), equals(1));
-    expect(layout_nit.single_cost('a'.runes.single), equals(0));
-    expect(layout_nit.single_cost('u'.runes.single), equals(1));
+    expect(layout_nit.single_cost('p'.runes.single), 1);
+    expect(layout_nit.single_cost('a'.runes.single), 0);
+    expect(layout_nit.single_cost('g'.runes.single), 1);
+    expect(layout_nit.single_cost('h'.runes.single), 1);
+    expect(layout_nit.single_cost('n'.runes.single), 0);
+    expect(layout_nit.single_cost('u'.runes.single), 1);
   });
   
   test("bigram cost", () {

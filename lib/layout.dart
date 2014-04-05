@@ -23,37 +23,34 @@ var layout_leicht = new Layout("leicht-er",
      "yxcvb jm,.ö",
      ]);
 
-Map<int, int> make_on_row(List<String> layout) {
-  var result = {};
-  for (var i = 0; i < 3; i++) {
-    String line = layout[i].replaceAll(' ', ''); 
-    line.runes.forEach((r) => result[r] = i);
-  };
-  return result;
-}
-
-Map<int, int> make_on_finger(List<String> layout) {
-  var result = {};
-  layout.forEach((f_line) {
-      var line = f_line.replaceAll(' ', ''); 
-      for (var i = 0; i < line.length; i++) {
-        result[line.runes.elementAt(i)] = fingers[i];
-      }
-  });
-  return result;
-}
-
-bool check_row(String row, int len) {
-  return false;
-}
-
 class Layout {
   String name;
   List<String> layout_2d;
   // rune --> finger
-  Map<int, int> on_finger;
+  Map<int, int> on_finger = {};
   // rune --> row
-  Map<int, int> on_row;
+  Map<int, int> on_row = {};
+  Map<int, bool> base_position = {};
+  
+  Layout(String this.name, List<String> this.layout_2d) {
+    check_layout(layout_2d);
+    // on_finger = make_on_finger(layout_2d);
+    // on_row = make_on_row(layout_2d);
+    make_maps(layout_2d);
+  }
+  
+  static const BASE_POSITIONS = const [0, 1, 2, 3, 6, 7, 8, 9];  
+  make_maps(List<String> layout) {
+    for (var row = 0; row < 3; row++) {
+      String line = layout[row].replaceAll(' ', ''); 
+      for (var col = 0; col < line.length; col++) {
+        var rune = line.runes.elementAt(col);
+        on_row[rune] = row;
+        on_finger[rune] = fingers[col];
+        base_position[rune] = BASE_POSITIONS.contains(col);
+      }
+   };
+  }
   
   void check_layout(List<String> layout) {
     layout.forEach((line) => expect(line[5], ' '));
@@ -72,12 +69,6 @@ class Layout {
         ));
   }
 
-  Layout(String this.name, List<String> this.layout_2d) {
-    check_layout(layout_2d);
-    on_finger = make_on_finger(layout_2d);
-    on_row = make_on_row(layout_2d);
-  }
-  
   bool finger_conflict(int a, int b) {
      return a != b && on_finger[a] == on_finger[b];  
   }
@@ -110,7 +101,7 @@ class Layout {
     return result;
   }
 
-  int single_cost(int rune) => (on_row[rune] == 1) ? 0 : 1;
+  int single_cost(int rune) => (on_row[rune] == 1 && base_position[rune]) ? 0 : 1;
 
   int bigram_cost(int a, int b) {
     int result = 0;
