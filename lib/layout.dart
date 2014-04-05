@@ -1,4 +1,3 @@
-import 'package:quiver/strings.dart';
 import 'package:unittest/unittest.dart';
 
 var fingers = [0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7];
@@ -126,14 +125,4 @@ class Layout {
     }
     return result;
   }
-
-  String cost_string(String s) {
-    const int padding = 10;
-    var d = s.length~/2 - cost(s);
-    if (d < 0) {
-      return repeat(' ', padding + d) + repeat('-', -d);
-    }
-    return repeat(' ', padding) + repeat('+', d);
-  }
-  
 }
