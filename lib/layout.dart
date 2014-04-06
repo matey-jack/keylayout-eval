@@ -1,4 +1,5 @@
 import 'package:unittest/unittest.dart';
+import 'package:quiver/strings.dart';
 
 var fingers = [0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7];
 
@@ -103,13 +104,14 @@ class Layout {
 
   int single_cost(int rune) => (on_row[rune] == 1 && base_position[rune]) ? 0 : 1;
 
-  int bigram_cost(int a, int b) {
-    int result = 0;
-    result += finger_conflict(a, b) ? 1 : 0;
-    result += (same_hand(a, b) && row_conflict(a, b) ? 1 : 0);
-    result += (same_hand(a, b) && on_row[a] != 1 && on_row[a] == on_row[b]) ? -1 : 0;
-    return result;
-  }
+  int bigram_cost(int a, int b) 
+    => finger_conflict_cost(a, b) + row_conflict_cost(a, b) - same_row_cost_rebate(a, b);
+
+  int same_row_cost_rebate(int a, int b) => (same_hand(a, b) && on_row[a] != 1 && on_row[a] == on_row[b]) ? 1 : 0;
+
+  int row_conflict_cost(int a, int b) => (same_hand(a, b) && row_conflict(a, b) ? 1 : 0);
+
+  int finger_conflict_cost(int a, int b) => finger_conflict(a, b) ? 1 : 0;
   
   int cost(String s) {
     var runes = s.runes;
@@ -122,5 +124,28 @@ class Layout {
       prev = rune;
     }
     return result;
+  }
+}
+
+class Cost {
+  int single_cost = 0;  
+  int row_rebate = 0;
+  int finger_conflicts = 0;
+  int row_conflicts = 0;
+  
+  int get global_cost => single_cost - row_rebate + row_conflicts + finger_conflicts;
+  
+  String toString() {
+    var buffer = new StringBuffer();
+    writeln(String label, String thing) {
+      buffer.writeln(label + padLeft(thing, 10, ' '));
+    }
+    writeln("Finger moves:           ", "$single_cost");
+    writeln("-- rebate for same row: ", "$row_rebate");
+    writeln("Finger conflicts:       ", "$finger_conflicts");
+    writeln("Row conflicts:          ", "$row_conflicts");
+    buffer.writeln(repeat('-', 24+10));
+    writeln("Total cost:             ", "$global_cost");
+    return buffer.toString();
   }
 }
