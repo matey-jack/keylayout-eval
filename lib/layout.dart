@@ -24,6 +24,8 @@ var layout_leicht = new Layout("leicht-er",
      "yxcvb jm,.ö",
      ]);
 
+final layouts = [layout_qwertz, layout_neo2, layout_nit, layout_leicht];
+
 class Layout {
   String name;
   List<String> layout_2d;
@@ -148,4 +150,39 @@ class Cost {
     writeln("Total cost:             ", "$global_cost");
     return buffer.toString();
   }
+  
+  void add_single_cost(single_freq, Layout layout) {
+    for (String line in single_freq) {
+      if (line.length==0)
+        continue;
+      var fields = line.split(' '); 
+      int n = int.parse(fields[0]);
+      String letter = fields[1].toLowerCase();
+      int rune = letter.runes.single;
+      if (layout.on_finger[rune] == null) {
+        // print("Ignoring letter '$letter'.");
+      }
+      single_cost += n * layout.single_cost(rune);
+    }
+  }
+
+  void add_bigram_cost(bigram_freq, Layout layout) {
+    for (String line in bigram_freq) {
+      if (line.length==0)
+        continue;
+      var fields = line.split(' '); 
+      int n = int.parse(fields[0]);
+      String letters = fields[1].toLowerCase();
+      int a = letters.runes.first;
+      int b = letters.runes.last;
+      if (layout.on_finger[a] == null || layout.on_finger[b] == null ) {
+        // print("Ignoring bigram '$letters'.");
+      }
+      row_rebate += n * layout.same_row_cost_rebate(a, b);
+      finger_conflicts += n * layout.finger_conflict_cost(a, b);
+      row_conflicts += n * layout.row_conflict_cost(a, b);
+    }
+  }
+
+
 }
