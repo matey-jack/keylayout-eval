@@ -61,7 +61,7 @@ main() {
     return cost;
   }).toList();
   for (var i = 0; i < layouts.length; i++) {
-    print("======== ${layouts[i].name} ==========");
+    print(center(" ${layouts[i].name} ",  24+10, '='));
     print(costs[i]);
     print('');
   }

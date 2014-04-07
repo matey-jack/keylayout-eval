@@ -23,8 +23,13 @@ var layout_leicht = new Layout("leicht-er",
      "aserg hniltä",
      "yxcvb jm,.ö",
      ]);
+var layout_opt = new Layout("AdNW/Neo-optimal",
+    ["kuü.ä vgcljf",
+     "hieao dtrnsß",
+     "xyö,q bpwmz",
+     ]);
 
-final layouts = [layout_qwertz, layout_neo2, layout_nit, layout_leicht];
+final layouts = [layout_qwertz, layout_neo2, layout_nit, layout_leicht, layout_opt];
 
 class Layout {
   String name;
