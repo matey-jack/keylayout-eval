@@ -76,6 +76,13 @@ class Layout {
             reason: name + ':' + new String.fromCharCode(rune)
         ));
   }
+  
+  String adnw_format() {
+    String flat_layout = layout_2d.join().replaceAll(' ', '');
+    var nobreakspace = new String.fromCharCode(0xa0);
+    String spaceless_name = name.replaceAll(' ', nobreakspace);
+    return "$flat_layout    $spaceless_name";
+  }
 
   bool finger_conflict(int a, int b) {
      return a != b && on_finger[a] == on_finger[b];  
