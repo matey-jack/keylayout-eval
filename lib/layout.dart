@@ -6,7 +6,7 @@ var fingers = [0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7];
 var layout_qwertz = new Layout("qwertz",
     ["qwert zuiopü",
      "asdfg hjklöä",
-     "yxcvb nm,.ß",
+     "yxcvb nm,.-",
      ]);
 var layout_neo2 = new Layout("Neo 2",
     ["xvlcw khgfqß",
@@ -15,23 +15,13 @@ var layout_neo2 = new Layout("Neo 2",
      ]);
 var layout_nit = new Layout("leicht-nit",
     ["qwerö zkuopü",
-    "asdfg hniltä",
-    "yxcvb jm,.-",
+     "asdfg hniltä",
+     "yxcvj bm,.-",
     ]);
 var layout_leicht = new Layout("leicht-er",
     ["qwöfd zkuopü",
      "aserg hniltä",
-     "yxcvb jm,.-",
-    ]);
-var layout_bj = new Layout("leicht-er-bj",
-    ["qwöfd zkuopü",
-     "aserg hniltä",
      "yxcvj bm,.-",
-    ]);
-var layout_kfzd = new Layout("leicht-er-kfzd",
-    ["qwökf zduopü",
-     "aserg hniltä",
-     "yxcvb jm,.-",
     ]);
 var layout_opt = new Layout("AdNW/Neo-optimal",
     ["kuü.ä vgcljf",
