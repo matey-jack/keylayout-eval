@@ -22,7 +22,17 @@ var layout_leicht = new Layout("leicht-er",
     ["qwßfd zkuopü",
      "aserg hniltä",
      "yxcvb jm,.ö",
-     ]);
+    ]);
+var layout_bj = new Layout("leicht-er-bj",
+    ["qwßfd zkuopü",
+     "aserg hniltä",
+     "yxcvj bm,.ö",
+    ]);
+var layout_kfzd = new Layout("leicht-er-kfzd",
+    ["qwßkf zduopü",
+     "aserg hniltä",
+     "yxcvb jm,.ö",
+    ]);
 var layout_opt = new Layout("AdNW/Neo-optimal",
     ["kuü.ä vgcljf",
      "hieao dtrnsß",
