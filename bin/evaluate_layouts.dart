@@ -68,7 +68,7 @@ main_eval() {
 }
 
 main() {
-  const String language = "englisch";
+  const String language = "deutsch";
   var bigram_freq = new File("../resources/$language-t.txt.2").readAsLinesSync(encoding: LATIN1);
   List<List<String>> conflictsPerLayout = layouts.map((Layout l) =>
       bigram_freq.where((line) => has_conflict(l, line)).take(20)

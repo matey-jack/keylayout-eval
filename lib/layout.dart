@@ -1,50 +1,72 @@
 import 'package:unittest/unittest.dart';
 import 'package:quiver/strings.dart';
 
-var fingers = [0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7];
+List<int> fingers_narrow = [0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7];
 
-var layout_qwertz = new Layout("qwertz",
+List<List<int>> fingers_wide = [
+  [0, 1, 2, 3, 3, 3, 4, 4, 5, 6, 7, 7],
+  [0, 1, 2, 3, 3, 3, 4, 4, 5, 6, 7],
+  [1, 2, 3, 3, 3, 4, 4, 4, 5, 6, 7],
+];
+
+var layout_qwertz = new Layout("qwertz", fingers_narrow, 
     ["qwert zuiopü",
      "asdfg hjklöä",
      "yxcvb nm,.-",
      ]);
-var layout_neo2 = new Layout("Neo 2",
+var layout_neo2 = new Layout("Neo 2", fingers_narrow,
     ["xvlcw khgfqß",
      "uiaeo snrtdy",
      "üöäpz bm,.j",
      ]);
-var layout_nit = new Layout("leicht-nit",
+var layout_nit = new Layout("leicht-nit", fingers_narrow,
     ["qwerö zkuopü",
      "asdfg hniltä",
-     "yxcvj bm,.-",
+     "yxcvb jm,.-",
     ]);
-var layout_leicht = new Layout("leicht-er",
-    ["qwödf zkuopü",
-     "aserg hniltä",
-     "yxcvj bm,.-",
-    ]);
-var layout_opt = new Layout("AdNW/Neo-optimal",
+//var layout_leicht = new Layout("leicht-er", fingers_narrow,
+//    ["qwödf zkuopü",
+//     "aserg hniltä",
+//     "yxcvb jm,.-",
+//    ]);
+var layout_opt = new Layout("AdNW/Neo-optimal", fingers_narrow,
     ["kuü.ä vgcljf",
      "hieao dtrnsß",
      "xyö,q bpwmz",
      ]);
+var layout_nit_breit = new Layout("nit breit", fingers_wide,
+    ["äweröq zkuopü",
+     "asdfg' hnilt",
+     "yxcvb+ jm,.-",
+    ]);
 
-final layouts = [layout_qwertz, layout_neo2, layout_nit, layout_leicht, layout_opt];
+final layouts = [layout_qwertz, layout_neo2, layout_nit, layout_opt, 
+                 layout_nit_breit];
 
 class Layout {
+  // constructor arguments
   String name;
+  List fingers;
   List<String> layout_2d;
+  
   // rune --> finger
   Map<int, int> on_finger = {};
   // rune --> row
   Map<int, int> on_row = {};
   Map<int, bool> base_position = {};
   
-  Layout(String this.name, List<String> this.layout_2d) {
-    check_layout(layout_2d);
-    // on_finger = make_on_finger(layout_2d);
-    // on_row = make_on_row(layout_2d);
+  Layout(String this.name, List this.fingers, List<String> this.layout_2d) {
+    check_layout(fingers, layout_2d);
     make_maps(layout_2d);
+  }
+  
+  int get_finger(int row, int col) {
+    if (fingers[0] is int) {
+      return fingers[col];
+    } else {
+      assert(fingers[0][0] is int);
+      return fingers[row][col];
+    }  
   }
   
   static const BASE_POSITIONS = const [0, 1, 2, 3, 6, 7, 8, 9];  
@@ -54,17 +76,25 @@ class Layout {
       for (var col = 0; col < line.length; col++) {
         var rune = line.runes.elementAt(col);
         on_row[rune] = row;
-        on_finger[rune] = fingers[col];
+        on_finger[rune] = get_finger(row, col);
         base_position[rune] = BASE_POSITIONS.contains(col);
       }
    };
   }
   
-  void check_layout(List<String> layout) {
-    layout.forEach((line) => expect(line[5], ' '));
-    expect(layout[0].length, 12, reason:name + ':' + layout[0]);
-    expect(layout[1].length, 12, reason:name + ':' + layout[1]);
-    expect(layout[2].length, 11, reason:name + ':' + layout[2]);
+  void check_layout(List fingers, List<String> layout) {
+    if (fingers == fingers_narrow) {
+      layout.forEach((line) => expect(line[5], ' '));
+      expect(layout[0].length, 12, reason:name + ':' + layout[0]);
+      expect(layout[1].length, 12, reason:name + ':' + layout[1]);
+      expect(layout[2].length, 11, reason:name + ':' + layout[2]);
+    } else {
+      expect(layout.length, 3);
+      layout.forEach((line) => expect(line[6], ' '));
+      for (int i = 0; i < layout.length; i++) {
+        expect(layout[i].length, fingers[i].length + 1, reason: "$name: line $i");
+      }
+    }
     String letters = (layout[0] + layout[1] + layout[2]).replaceAll(' ', '');
     var lts = new Set.from(letters.runes);
     var exp_lts = new Set.from("äöü,.".runes);  // don't check for ß or -

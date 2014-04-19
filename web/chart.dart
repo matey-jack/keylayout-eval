@@ -2,7 +2,7 @@ library chart;
 // https://bitbucket.org/ips/chart.dart/src/aa73b37658cf642170e933a534109509c02d4c7b/example/web/chart.dart?at=default
 import 'dart:html';
 //import 'dart:io';
-import 'dart:convert';
+//import 'dart:convert';
 import 'package:chart/chart.dart';
 import '../lib/layout.dart';
 
