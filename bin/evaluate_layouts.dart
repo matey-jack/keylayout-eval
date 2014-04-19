@@ -50,7 +50,7 @@ main_word_cost() {
   });
 }
 
-main() {
+main_eval() {
   const String language = "deutsch";
   var bigram_freq = new File("../resources/$language-t.txt.2").readAsLinesSync(encoding: LATIN1);
   var single_freq = new File("../resources/$language-t.txt.1").readAsLinesSync(encoding: LATIN1);
@@ -65,5 +65,27 @@ main() {
     print(costs[i]);
     print('');
   }
+}
+
+main() {
+  const String language = "englisch";
+  var bigram_freq = new File("../resources/$language-t.txt.2").readAsLinesSync(encoding: LATIN1);
+  List<List<String>> conflictsPerLayout = layouts.map((Layout l) =>
+      bigram_freq.where((line) => has_conflict(l, line)).take(20)
+  ).toList();
+  const COL_WIDTH = 15; 
+  print(layouts.map((Layout l) => padRight(l.name, COL_WIDTH, ' ')).join(''));
+  for (var i = 0; i < conflictsPerLayout[0].length; i++) {
+    print(conflictsPerLayout.map((Iterable<String> conflicts) => 
+        padRight(conflicts.elementAt(i), COL_WIDTH, ' ')).join(''));
+  }
+}
+
+bool has_conflict(Layout l, String line) {
+  var fields = line.split(' '); 
+  String letters = fields[1].toLowerCase();
+  int a = letters.runes.first;
+  int b = letters.runes.last;
+  return (l.finger_conflict(a, b) || (l.same_hand(a, b) && l.row_conflict(a, b)));
 }
 

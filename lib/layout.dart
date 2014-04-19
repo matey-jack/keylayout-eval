@@ -19,7 +19,7 @@ var layout_nit = new Layout("leicht-nit",
      "yxcvj bm,.-",
     ]);
 var layout_leicht = new Layout("leicht-er",
-    ["qwöfd zkuopü",
+    ["qwödf zkuopü",
      "aserg hniltä",
      "yxcvj bm,.-",
     ]);
@@ -67,7 +67,7 @@ class Layout {
     expect(layout[2].length, 11, reason:name + ':' + layout[2]);
     String letters = (layout[0] + layout[1] + layout[2]).replaceAll(' ', '');
     var lts = new Set.from(letters.runes);
-    var exp_lts = new Set.from("äöüß,.".runes);
+    var exp_lts = new Set.from("äöü,.".runes);  // don't check for ß or -
     for (var i = 'a'.runes.single; i <= 'z'.runes.single; i++) {
       exp_lts.add(i);
     }
