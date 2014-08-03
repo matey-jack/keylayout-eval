@@ -8,17 +8,24 @@ import '../lib/layout.dart';
 
 
 void main() {
-  const String language = "deutsch";
+  //show_diagram("deutsch");
+  show_diagram("englisch");
+}
+
+void show_diagram(String language) {
+  List<Frequency> parseFrequencies(String data) {
+    return data.split("\n").map((l) => new Frequency(l)).toList();
+  }
   HttpRequest.getString("../resources/$language-t.txt.2")
       .then((bigrams_string) {
           HttpRequest.getString("../resources/$language-t.txt.1")
            .then((singles_string) {
-             var single_freq = singles_string.split("\n");
-             var bigram_freq = bigrams_string.split("\n");
+             List<Frequency> singles = parseFrequencies(singles_string);
+             List<Frequency> bigrams = parseFrequencies(bigrams_string);
              Iterable<Cost> costs = layouts.map((l) {
                Cost cost = new Cost();
-               cost.add_single_cost(single_freq, l);
-               cost.add_bigram_cost(bigram_freq, l);
+               cost.add_single_cost(singles, l);
+               cost.add_bigram_cost(bigrams, l);
                return cost;
              });       
              
@@ -44,11 +51,11 @@ void main() {
              
              
              DivElement container = new DivElement();
+             // TODO: add heading...
              container.style.height ='400px';
              container.style.width =  '100%';
              document.body.children.add(container);
              chart.show(container);
            });
       });
- 
 }
