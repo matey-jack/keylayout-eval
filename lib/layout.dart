@@ -3,18 +3,24 @@ import 'package:quiver/strings.dart';
 
 List<int> fingers_narrow = [0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7];
 
-List<List<int>> fingers_wide = [[0, 1, 2, 3, 3, 3, 4, 4, 5, 6, 7, 7], [0, 1, 2, 3, 3, 3, 4, 4, 5, 6, 7, 7], [0, 1, 2, 3, 3, 4, 4, 4, 5, 6, 8],// 8 is the thumb key
+List<List<int>> fingers_wide = [
+  [0, 1, 2, 3, 3, 3, 4, 4, 5, 6, 7], 
+  [0, 1, 2, 3, 3, 3, 4, 4, 5, 6, 7], 
+  [0, 1, 2, 3, 3, 4, 4, 4, 5, 6, 8],
+  // 8 is the thumb key
+  // finger 7 is doing Enter, and Shift which are very common keys,
+  // but not even accounted for in most other layout optimizers.
 ];
 
-var layout_qwertz = new Layout("qwertz", fingers_narrow, ["qwert zuiopü", "asdfg hjklöä", "yxcvb nm,.-",]);
-var layout_colemak = new Layout("colemak", fingers_narrow, ["qwfpg jluyüö", "arstd hneioä", "zxcvb km,.-",]);
-var layout_minimak8 = new Layout("minimak 8", fingers_narrow, ["qwdrk zuilpü", "astfg hneoöä", "yxcvb jm,.-",]);
-var layout_neo2 = new Layout("Neo 2", fingers_narrow, ["xvlcw khgfqß", "uiaeo snrtdy", "üöäpz bm,.j",]);
-var layout_nit = new Layout("leicht-nit", fingers_narrow, ["qwerö zkuopü", "asdfg hniltä", "yxcvb jm,.-",]);
-var layout_leicht = new Layout("leicht-et", fingers_narrow, ["qwödf zkuopü", "asetg hnilrä", "yxcvb jm,.-",]);
-var layout_opt = new Layout("AdNW/Neo-optimal", fingers_narrow, ["kuü.ä vgcljf", "hieao dtrnsß", "xyö,q bpwmz",]);
-var layout_nit_breit = new Layout("nit breit", fingers_wide, ["qwerö+ zkuopü", "asdfg' hniltä", "yxcvb- jm,._",]);
-var layout_breit = new Layout("breit mit Daumen-e", fingers_wide, ["qwbfö+ zkuopü", "asdrg' hniltä", "yxcv_- jm,.e",]);
+var layout_qwertz = new Layout("qwertz", fingers_narrow, ["qwert zuiopü", "asdfg hjklöä", "yxcvb nm,.-"]);
+var layout_colemak = new Layout("colemak", fingers_narrow, ["qwfpg jluyüö", "arstd hneioä", "zxcvb km,.-"]);
+var layout_minimak8 = new Layout("minimak 8", fingers_narrow, ["qwdrk zuilpü", "astfg hneoöä", "yxcvb jm,.-"]);
+var layout_neo2 = new Layout("Neo 2", fingers_narrow, ["xvlcw khgfqß", "uiaeo snrtdy", "üöäpz bm,.j"]);
+var layout_nit = new Layout("leicht-nit", fingers_narrow, ["qwerö zkuopü", "asdfg hniltä", "yxcvb jm,.-"]);
+var layout_leicht = new Layout("leicht-et", fingers_narrow, ["qwödf zkuopü", "asetg hnilrä", "yxcvb jm,.-"]);
+var layout_opt = new Layout("AdNW/Neo-optimal", fingers_narrow, ["kuü.ä vgcljf", "hieao dtrnsß", "xyö,q bpwmz"]);
+var layout_nit_breit = new Layout("nit breit", fingers_wide, ["qwerö+ zkuopü", "asdfg' hniltä", "yxcvb -jm,."]);
+var layout_breit = new Layout("breit mit Daumen-e", fingers_wide, ["qwbfö+ zkuopü", "asdrg' hniltä", "yxcv/ -jm,.e"]);
 
 final layouts = [layout_qwertz, layout_neo2, layout_nit, layout_leicht, layout_opt, layout_colemak, layout_minimak8, 
                  layout_nit_breit, layout_breit];
@@ -64,17 +70,11 @@ class Layout {
   }
 
   void check_layout(List fingers, List<String> layout) {
-    if (fingers == fingers_narrow) {
-      layout.forEach((line) => expect(line[5], ' '));
-      expect(layout[0].length, 12, reason: name + ':' + layout[0]);
-      expect(layout[1].length, 12, reason: name + ':' + layout[1]);
-      expect(layout[2].length, 11, reason: name + ':' + layout[2]);
-    } else {
-      expect(layout.length, 3);
-      layout.forEach((line) => expect(line[6], ' '));
-      for (int i = 0; i < layout.length; i++) {
-        expect(layout[i].length, fingers[i].length + 1, reason: "$name: line $i");
-      }
+    layout.forEach((line) => expect(line[5], ' '));
+    expect(layout.length, 3);
+    final row_lengths = (fingers == fingers_narrow) ? [11, 11, 10] : [12, 12, 12]
+    for (int i = 0; i < layout.length; i++) {
+      expect(layout[i].length, row_lengths[i] + 1, reason: "layout $name: line $i has bad length.");
     }
     String letters = (layout[0] + layout[1] + layout[2]).replaceAll(' ', '');
     var lts = new Set.from(letters.runes);
@@ -177,14 +177,15 @@ class Cost {
 
   String toString() {
     var buffer = new StringBuffer();
+    const number_width = 10;
     writeln(String label, String thing) {
-      buffer.writeln(label + padLeft(thing, 10, ' '));
+      buffer.writeln(label + padLeft(thing, number_width, ' '));
     }
     writeln("Finger moves:           ", "$single_cost");
     writeln("-- rebate for same row: ", "$row_rebate");
     writeln("Finger conflicts:       ", "$finger_conflicts");
     writeln("Row conflicts:          ", "$row_conflicts");
-    buffer.writeln(repeat('-', 24 + 10));
+    buffer.writeln(repeat('-', 24 + number_width));
     writeln("Total cost:             ", "$global_cost");
     return buffer.toString();
   }
